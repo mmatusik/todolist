@@ -4,7 +4,8 @@ var express = require('express'),
   mongoose = require('mongoose'),
   Task = require('./api/models/todoListModel'), //created model loading here
   bodyParser = require('body-parser'),
-  cors = require('cors');
+  cors = require('cors'),
+  path = require('path');
   
 // mongoose instance connection url connection
 mongoose.Promise = global.Promise;
@@ -20,12 +21,19 @@ routes(app); //register the route
 
 var cons = require('consolidate');
 
-var corsOptions = {
-  origin: 'http://localhost',
-  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204 
+var allowCrossDomain = function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+
+  next();
 }
- 
-app.get('/tasks/:id', cors(corsOptions), function (req, res, next) {
+
+app.use(express.static(__dirname + '/public'));
+app.use(allowCrossDomain);
+
+
+app.get('/tasks/:id', cors(allowCrossDomain), function (req, res, next) {
   res.json({msg: 'This is CORS-enabled for only example.com.'})
 })
 

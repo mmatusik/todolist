@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <title>Hello, world!</title>
+
+    <style>
+    body { overflow: scroll; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+        <div class="row">
+            <div class="col mt-5">
+                <h2>API Manager</h2>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col mt-5">
+                <h3>Add record</h3>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col mt-3">
+                <form class="form-inline">
+                <div class="form-group mb-2">
+                    <label for="staticEmail2" class="sr-only">Name</label>
+                    <input type="text" readonly class="form-control-plaintext" id="staticEmail2" value="email@example.com">
+                </div>
+                <div class="form-group mx-sm-3 mb-2">
+                    <label for="inputName2" class="sr-only">Name</label>
+                    <input type="text" class="form-control" id="inputName2" placeholder="User name">
+                </div>
+                <button type="submit" class="btn btn-primary mb-2">Dodaj rekord</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col mt-5">
+                <h3>Get records</h3>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col mt-3">
+                <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  
+                </tbody>
+              </table>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    
+    <script>
+    var getData = function () {
+        $.ajax({
+            url: "http://localhost:3000/tasks",
+            dataType: "JSON"
+        }).done(function(data) {
+            for (let i in data) 
+            {
+                let output ="<tr class='" + data[i]._id + "'><th scope='row'>" + data[i]._id + "</th><td>" + data[i].name + "</td><td><a href='#' class='btn btn-primary btn-delete'>DELETE</a></td></tr>";
+                $('table tbody').hide().append(output).fadeIn('slow');
+            }
+           
+        })
+            .fail(function() {
+                alert( "error" );
+        });
+        return $;
+    }
+    getData();
+
+    $(document).ready(function () {
+
+        $('form').submit(function(event) {
+
+        // get the form data
+        // there are many ways to get this data using jQuery (you can use the class or id also)
+        var formData = {
+            'name'              : $('input[id=inputName2]').val(),
+        };
+
+        // process the form
+        $.ajax({
+            type        : 'POST', // define the type of HTTP verb we want to use (POST for our form)
+            url         : 'http://localhost:3000/tasks', // the url where we want to POST
+            data        : formData, // our data object
+            dataType    : 'json', // what type of data do we expect back from the server
+            encode          : true
+        })
+            // using the done promise callback
+            .done(function(data) {
+                $('tr').hide();
+                getData();
+                // log data to the console so we can see
+                console.log(data); 
+
+                // here we will handle errors and validation messages
+            });
+
+        // stop the form from submitting the normal way and refreshing the page
+        event.preventDefault();
+        });
+
+        $('.btn-delete').click(function (e) {
+            e.preventDefault();
+            let dataId = $(this).attr("href");
+            console.log(dataId);
+            $.ajax({
+                headers: {
+                    'Content-Type':'application/x-www-form-urlencoded'
+                },
+                contentType: 'application/x-www-form-urlencoded',
+                data: {
+                    "_id": JSON.stringify({dataId})
+                },
+                dataType: 'json',
+                success: function(data){
+                    console.log("device control succeeded");
+                },
+                error: function(){
+                    console.log("Device control failed");
+                },
+                processData: false,
+                type: 'DELETE',
+                url: 'http://localhost:3000/tasks'
+            });
+            // $.ajax({
+            //     url: 'http://localhost:3000/tasks',
+            //     type: 'DELETE',
+            //     error: function(http) {
+            //         alert(http.responseText);
+            //     },
+            //     success: function(result) {
+            //         console.log('Deleted');
+            //     }
+            // });
+        });
+    })
+
+    </script>
+    </body>
+</html>
