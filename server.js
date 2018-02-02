@@ -4,7 +4,7 @@ var express = require('express'),
   mongoose = require('mongoose'),
   Task = require('./api/models/todoListModel'), //created model loading here
   bodyParser = require('body-parser'),
-  cors = require('cors'),
+  cors = require('cors'),// add
   path = require('path');
   
 // mongoose instance connection url connection
@@ -14,13 +14,13 @@ mongoose.connect('mongodb://x2008x:wasko123@ds115198.mlab.com:15198/matusik');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-
+// add
 var routes = require('./api/routes/todoListRoutes'); //importing route
 routes(app); //register the route
 
-
+// add
 var cons = require('consolidate');
-
+// add
 var allowCrossDomain = function(req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
